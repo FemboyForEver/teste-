@@ -1,10 +1,24 @@
+shared.stop = true
+wait(1)
+shared.stop = false
+
+shared.nospacedelay = shared.nospacedelay or false
+
+local str = shared.scr or "qw[er]ty"
+local FinishTime = shared.ftime or 10
+
+local vim = game:GetService("VirtualInputManager")
+
+local nstr = string.gsub(str, "[\\\n]", "")
+
+local baseDelay = shared.tempo and (6 / shared.tempo) or shared.delay or FinishTime / (string.len(nstr) / 1.05)
+
 local function humanDelay(factor, isBracket)
     local randomFactor = math.random(90, 110) / 100
     local dynamicFactor = 1 + (math.sin(tick() * 0.1) * 0.05)
     local delay = baseDelay * factor * randomFactor * dynamicFactor
     if isBracket then
-        -- Appliquer un facteur de délai plus long pour les crochets
-        delay = delay * 2  -- Vous pouvez ajuster ce facteur
+        delay = delay * 2
     end
     return delay
 end
@@ -13,37 +27,33 @@ local function pressKey(key, isBracket, maxHoldTime)
     wait(humanDelay(1, isBracket))
 
     if isBracket then
-        -- Maintenir la touche crochet enfoncée pendant maxHoldTime (3 secondes max)
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
-        wait(maxHoldTime)  -- Attendre jusqu'à 3 secondes (ou un délai personnalisé)
+        wait(maxHoldTime)
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     else
-        -- Notes individuelles pressées brièvement
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
         wait(humanDelay(1, false))
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     end
 end
 
-local queue = ""
 local rem = true
 local bracketQueue = {}
-local lastWasBracket = false  -- Variable pour suivre si la dernière touche était un crochet
+local lastWasBracket = false
+local bracketStartTime = nil
 
--- La durée maximale pendant laquelle les crochets seront maintenus enfoncés
-local maxHoldTime = 3  -- 3 secondes maximum pour les crochets
+local maxHoldTime = 3
 
 for i = 1, #str do
     if shared.stop == true then return end
 
     local c = str:sub(i, i)
 
-    -- Si c'est un crochet ouvrant, maintenir la pression
     if c == "[" then
         rem = false
         lastWasBracket = true
+        bracketStartTime = tick()
         continue
-    -- Si c'est un crochet fermant
     elseif c == "]" then
         rem = true
         lastWasBracket = true
@@ -58,30 +68,30 @@ for i = 1, #str do
         c = "|"
     end
 
-    -- Ignorer les notes vides ou trop rapprochées
     if c == "|" or c == "-" then
         wait(humanDelay(2, false))
         continue
     end
 
-    -- Si la dernière touche était un crochet, appuyer sur le prochain caractère comme une touche individuelle
     if lastWasBracket then
         if c == "[" or c == "]" then
-            -- Si la prochaine note est un crochet, on la traite normalement
             pcall(function()
-                pressKey(c, false, maxHoldTime)  -- Appuyer sur le crochet comme une touche normale
+                pressKey(c, false, 0)
             end)
         else
-            -- Si c'est une note individuelle, relâcher le crochet et jouer la touche normalement
             pcall(function()
-                pressKey(c, false, 0)  -- 0 ici signifie pas de pression prolongée
+                pressKey(c, false, 0)
             end)
         end
-        lastWasBracket = false  -- Réinitialiser après avoir pressé une note individuelle
+        lastWasBracket = false
     else
-        -- Si c'est une note normale ou une touche individuelle
         pcall(function()
-            pressKey(c, false, 0)  -- 0 ici signifie pas de pression prolongée
+            pressKey(c, false, 0)
         end)
+    end
+
+    if lastWasBracket and bracketStartTime and (tick() - bracketStartTime > maxHoldTime) then
+        vim:SendKeyEvent(false, string.byte("["), false, nil)
+        bracketStartTime = nil
     end
 end
