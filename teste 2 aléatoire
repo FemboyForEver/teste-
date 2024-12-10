@@ -13,6 +13,12 @@ local nstr = string.gsub(str, "[\\\n]", "")
 
 local baseDelay = shared.tempo and (6 / shared.tempo) or shared.delay or FinishTime / (string.len(nstr) / 1.05)
 
+local function humanDelay(factor)
+    local randomFactor = math.random(90, 110) / 100
+    local dynamicFactor = 1 + (math.sin(tick() * 0.1) * 0.05)
+    return baseDelay * factor * randomFactor * dynamicFactor
+end
+
 local function randomShortDelay()
     return math.random(10, 100) / 1000
 end
@@ -33,6 +39,7 @@ local function endshift()
 end
 
 local function pressKey(key)
+    wait(humanDelay(1))
     local delay = randomLongDelay()
     spawn(function()
         doshift(key)
@@ -41,10 +48,11 @@ local function pressKey(key)
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
         endshift()
     end)
-    wait(randomShortDelay())
+    wait(humanDelay(1))
 end
 
 local function pressMultipleKeys(keys)
+    wait(humanDelay(1.5))
     local randomIndex = math.random(1, #keys)
     for i, key in ipairs(keys) do
         local extraDelay = (i == randomIndex) and 0.1 or 0
@@ -56,7 +64,7 @@ local function pressMultipleKeys(keys)
             endshift()
         end)
     end
-    wait(randomShortDelay())
+    wait(humanDelay(1.5))
 end
 
 local rem = true
@@ -84,7 +92,7 @@ for i = 1, #str do
     end
 
     if c == "|" or c == "-" then
-        wait(randomShortDelay())
+        wait(humanDelay(2))
         continue
     end
 
