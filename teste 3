@@ -38,9 +38,9 @@ local function endshift()
     vim:SendKeyEvent(false, 304, false, nil)
 end
 
-local function pressKey(key)
+local function pressKey(key, useRandomDelay)
     wait(humanDelay(1))
-    local delay = randomLongDelay()
+    local delay = useRandomDelay and randomLongDelay() or 0
     spawn(function()
         doshift(key)
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
@@ -102,6 +102,6 @@ for i = 1, #str do
     end
 
     pcall(function()
-        pressKey(c)
+        pressKey(c, true)
     end)
 end
