@@ -18,7 +18,7 @@ local function randomShortDelay()
 end
 
 local function randomLongDelay()
-    return math.random(150, 1000) / 1000
+    return math.random(150, 500) / 1000
 end
 
 local function doshift(key)
@@ -34,7 +34,7 @@ end
 
 local function pressKey(key)
     local delay = randomLongDelay()
-    pcall(function()
+    spawn(function()
         doshift(key)
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
         wait(delay)
@@ -48,7 +48,7 @@ local function pressMultipleKeys(keys)
     local randomIndex = math.random(1, #keys)
     for i, key in ipairs(keys) do
         local extraDelay = (i == randomIndex) and 0.1 or 0
-        pcall(function()
+        spawn(function()
             doshift(key)
             vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
             wait(0.1 + extraDelay)
