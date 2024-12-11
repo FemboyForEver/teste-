@@ -11,7 +11,7 @@ local initialBPM = 140
 local maxBPM = 300
 local minBPM = 120
 local rapidIncreaseTime = 3
-local rapidDecreaseTime = 7
+local rapidDecreaseTime = 100
 local smoothIncreaseEndTime = 60
 local finalBPM = 300
 
