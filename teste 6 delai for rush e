@@ -9,9 +9,9 @@ local vim = game:GetService("VirtualInputManager")
 
 local initialBPM = 140
 local maxBPM = 300
-local minBPM = 120
+local minBPM = 140
 local rapidIncreaseTime = 3
-local rapidDecreaseTime = 7
+local rapidDecreaseTime = 10
 local smoothIncreaseEndTime = 60
 
 -- Fonction pour calculer le délai entre chaque touche
