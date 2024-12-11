@@ -94,8 +94,6 @@ for i = 1, #str do
         end
         bracketQueue = {}
         continue
-    elseif c == " " or string.byte(c) == 10 then
-        c = "|"
     end
 
     if c == "|" or c == "-" then
