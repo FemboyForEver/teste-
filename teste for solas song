@@ -9,7 +9,7 @@ local vim = game:GetService("VirtualInputManager")
 
 local initialBPM = 140
 local maxBPM = 300
-local rapidChangeTime = 5 -- Moment où le BPM passe au maximum (5 secondes)
+local rapidChangeTime = 2 -- Moment où le BPM passe au maximum (5 secondes)
 
 -- Fonction pour calculer le délai entre chaque touche
 local function calculateDelay(bpm)
