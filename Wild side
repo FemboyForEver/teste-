@@ -9,10 +9,10 @@ local vim = game:GetService("VirtualInputManager")
 
 -- BPM ajustés pour "Wild Side" (Beastars Opening)
 local tempoChanges = {
-    {0, 96},     -- Introduction douce
-    {20, 120},   -- Refrain dynamique
-    {50, 108},   -- Pont émotionnel
-    {70, 128},   -- Climax et fin rapide
+    {0, 132},     -- Introduction douce
+    {20, 180},   -- Refrain dynamique
+    {50, 168},   -- Pont émotionnel
+    {70, 200},   -- Climax et fin rapide
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
