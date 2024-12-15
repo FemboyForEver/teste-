@@ -3,27 +3,13 @@ wait(1)
 shared.stop = false
 
 local str = shared.scr or "qw[er]ty"
-local FinishTime = shared.ftime or 90 -- Durée totale (1 minute 30)
+local FinishTime = shared.ftime or 240
 
 local vim = game:GetService("VirtualInputManager")
 
--- BPM ajustés pour "Wild Side" (Beastars Opening)
-local tempoChanges = {
-    {0, 132},     -- Introduction douce
-    {20, 180},   -- Refrain dynamique
-    {50, 168},   -- Pont émotionnel
-    {70, 200},   -- Climax et fin rapide
-}
-
--- Fonction pour obtenir le BPM en fonction du temps actuel
-local function getCurrentBPM(currentTime)
-    for i = #tempoChanges, 1, -1 do
-        if currentTime >= tempoChanges[i][1] then
-            return tempoChanges[i][2]
-        end
-    end
-    return tempoChanges[1][2] -- Par défaut, retourne le BPM initial
-end
+local initialBPM = 133
+local maxBPM = 133
+local rapidChangeTime = 0 
 
 -- Fonction pour calculer le délai entre chaque touche
 local function calculateDelay(bpm)
@@ -79,9 +65,17 @@ for i = 1, #str do
     local c = str:sub(i, i)
     local currentTime = tick() - startTime
 
-    -- Obtenir le BPM actuel en fonction du temps écoulé
-    local currentBPM = getCurrentBPM(currentTime)
+    -- Détermine le BPM en fonction du temps
+    local currentBPM
+    if currentTime < rapidChangeTime then
+        -- Avant 5 secondes, le BPM reste à la valeur initiale
+        currentBPM = initialBPM
+    else
+        -- À partir de 5 secondes, le BPM passe directement au maximum
+        currentBPM = maxBPM
+    end
 
+    currentBPM = math.floor(currentBPM)
     local delay = calculateDelay(currentBPM)
 
     if c == "[" then
