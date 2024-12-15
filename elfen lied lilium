@@ -1,0 +1,100 @@
+shared.stop = true
+wait(1)
+shared.stop = false
+
+local str = shared.scr or "qw[er]ty"
+local FinishTime = shared.ftime or 120 -- Durée totale approximative (~2 minutes)
+
+local vim = game:GetService("VirtualInputManager")
+
+-- BPM ajustés pour "Lilium" (Elfen Lied Opening)
+local tempoChanges = {
+    {0, 72},    -- Introduction douce
+    {25, 80},   -- Climax vocal
+    {60, 72},   -- Transition émotionnelle et fin
+}
+
+-- Fonction pour obtenir le BPM en fonction du temps actuel
+local function getCurrentBPM(currentTime)
+    for i = #tempoChanges, 1, -1 do
+        if currentTime >= tempoChanges[i][1] then
+            return tempoChanges[i][2]
+        end
+    end
+    return tempoChanges[1][2] -- Par défaut, retourne le BPM initial
+end
+
+-- Fonction pour calculer le délai entre chaque touche
+local function calculateDelay(bpm)
+    return 60 / bpm
+end
+
+local shifting = false
+
+local function doshift(key)
+    if key:upper() ~= key then return end
+    if tonumber(key) then return end
+
+    vim:SendKeyEvent(true, 304, false, nil)
+    shifting = true
+end
+
+local function endshift()
+    if not shifting then return end
+
+    vim:SendKeyEvent(false, 304, false, nil)
+    shifting = false
+end
+
+local function pressKey(key, delay)
+    doshift(key)
+    vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
+    wait(delay * 0.3) -- Note courte : durée réduite à 30% du délai total
+    vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
+    endshift()
+    wait(delay * 0.2) -- Court intervalle avant la note suivante
+end
+
+local function pressMultipleKeys(keys, delay)
+    for _, key in ipairs(keys) do
+        doshift(key)
+        vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
+    end
+    wait(delay * 0.3) -- Note courte pour plusieurs touches
+    for _, key in ipairs(keys) do
+        vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
+        endshift()
+    end
+    wait(delay * 0.2) -- Court intervalle avant la note suivante
+end
+
+local bracketQueue = {}
+local rem = true
+local startTime = tick()
+
+for i = 1, #str do
+    if shared.stop == true then return end
+
+    local c = str:sub(i, i)
+    local currentTime = tick() - startTime
+
+    -- Obtenir le BPM actuel en fonction du temps écoulé
+    local currentBPM = getCurrentBPM(currentTime)
+
+    local delay = calculateDelay(currentBPM)
+
+    if c == "[" then
+        rem = false
+        continue
+    elseif c == "]" then
+        rem = true
+        if #bracketQueue > 0 then
+            pcall(function()
+                pressMultipleKeys(bracketQueue, delay)
+            end)
+        end
+        bracketQueue = {}
+        continue
+    elseif c == " " or string.byte(c) == 10 then
+        c = "|"
+    end
