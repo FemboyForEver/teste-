@@ -9,11 +9,11 @@ local vim = game:GetService("VirtualInputManager")
 
 -- Tempo pour "All I Want for Christmas Is You" avec différentes sections
 local tempoChanges = {
-    {0, 120},     -- Intro / Couplets 1 & 2
-    {30, 140},    -- Refrain
-    {60, 120},    -- Retour au tempo des couplets
-    {90, 140},    -- Pont (Bridge)
-    {120, 120},   -- Outro
+    {0, 160},     -- Intro / Couplets 1 & 2
+    {30, 190},    -- Refrain
+    {60, 160},    -- Retour au tempo des couplets
+    {90, 190},    -- Pont (Bridge)
+    {120, 160},   -- Outro
 }
 
 -- Fonction pour obtenir le BPM actuel en fonction du temps
