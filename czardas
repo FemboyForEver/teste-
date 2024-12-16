@@ -12,7 +12,7 @@ local tempoChanges = {
     {0, 140},     -- Largo
     {30, 180},    -- Moderato
     {60, 220},   -- Allegro Vivo
-    {120, 260},  -- Molto Vivace
+    {120, 240},  -- Molto Vivace
     {180, 140},   -- Retour au calme
 }
 
