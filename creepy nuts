@@ -9,10 +9,10 @@ local vim = game:GetService("VirtualInputManager")
 
 -- Tempo pour "DANDAN" de Creepy Nuts avec différentes sections
 local tempoChanges = {
-    {0, 85},     -- Intro / Couplets 1 & 2
-    {30, 90},    -- Refrain
-    {60, 80},    -- Pont / Breakdown
-    {90, 85},    -- Outro
+    {0, 120},     -- Intro / Couplets 1 & 2
+    {30, 170},    -- Refrain
+    {60, 120},    -- Pont / Breakdown
+    {90, 160},    -- Outro
 }
 
 -- Fonction pour obtenir le BPM actuel en fonction du temps
