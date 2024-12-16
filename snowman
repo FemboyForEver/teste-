@@ -9,7 +9,7 @@ local vim = game:GetService("VirtualInputManager")
 
 -- BPM constant pour "Snowman"
 local tempoChanges = {
-    {0, 74}, -- Tempo constant
+    {0, 86}, -- Tempo constant
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
