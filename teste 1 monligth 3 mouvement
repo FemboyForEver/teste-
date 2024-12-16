@@ -2,28 +2,30 @@ shared.stop = true
 wait(1)
 shared.stop = false
 
-shared.nospacedelay = shared.nospacedelay or false
-
 local str = shared.scr or "qw[er]ty"
-local FinishTime = shared.ftime or 10
+local FinishTime = shared.ftime or 330 -- Durée totale (~5 minutes 30 secondes)
 
 local vim = game:GetService("VirtualInputManager")
 
-local nstr = string.gsub(str, "[\\\n]", "")
+-- BPM constant pour "Moonlight Sonata 3e mouvement"
+local tempoChanges = {
+    {0, 168}, -- Presto agitato constant
+}
 
-local baseDelay = shared.tempo and (4 / shared.tempo) or shared.delay or FinishTime / (string.len(nstr) / 1.05)
-
-local function humanDelay(factor)
-    local randomFactor = math.random(90, 110) / 100
-    local dynamicFactor = 1 + (math.sin(tick() * 0.1) * 0.05)
-    return (baseDelay * 0.8) * factor * randomFactor * dynamicFactor
+-- Fonction pour obtenir le BPM en fonction du temps actuel
+local function getCurrentBPM(currentTime)
+    for i = #tempoChanges, 1, -1 do
+        if currentTime >= tempoChanges[i][1] then
+            return tempoChanges[i][2]
+        end
+    end
+    return tempoChanges[1][2] -- Par défaut, retourne le BPM initial
 end
 
-local function brutalDelay(factor)
-    return humanDelay(factor * 0.5)
+-- Fonction pour calculer le délai entre chaque touche
+local function calculateDelay(bpm)
+    return 60 / bpm
 end
-
-print("Finishing in", math.floor((baseDelay * #nstr) / 60), "minute/s", tostring(tonumber(tostring((baseDelay * #nstr) / 60):sub(3, 8)) * 60):sub(1, 2), "second/s")
 
 local shifting = false
 
@@ -42,38 +44,42 @@ local function endshift()
     shifting = false
 end
 
-local function pressKey(key, brutal)
-    wait(brutal and brutalDelay(1) or humanDelay(1))
+local function pressKey(key, delay)
     doshift(key)
     vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
-    wait(brutal and brutalDelay(0.5) or humanDelay(1))
+    wait(delay * 0.3) -- Note courte : durée réduite à 30% du délai total
     vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     endshift()
-    wait(brutal and brutalDelay(0.5) or humanDelay(1))
+    wait(delay * 0.2) -- Court intervalle avant la note suivante
 end
 
-local function pressMultipleKeys(keys, brutal)
-    wait(humanDelay(1.5))
+local function pressMultipleKeys(keys, delay)
     for _, key in ipairs(keys) do
         doshift(key)
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
     end
-    wait(brutal and brutalDelay(0.7) or humanDelay(1))
+    wait(delay * 0.3) -- Note courte pour plusieurs touches
     for _, key in ipairs(keys) do
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
         endshift()
     end
-    wait(humanDelay(1.5))
+    wait(delay * 0.2) -- Court intervalle avant la note suivante
 end
 
-local queue = ""
-local rem = true
 local bracketQueue = {}
+local rem = true
+local startTime = tick()
 
 for i = 1, #str do
     if shared.stop == true then return end
 
     local c = str:sub(i, i)
+    local currentTime = tick() - startTime
+
+    -- Obtenir le BPM actuel en fonction du temps écoulé
+    local currentBPM = getCurrentBPM(currentTime)
+
+    local delay = calculateDelay(currentBPM)
 
     if c == "[" then
         rem = false
@@ -82,7 +88,7 @@ for i = 1, #str do
         rem = true
         if #bracketQueue > 0 then
             pcall(function()
-                pressMultipleKeys(bracketQueue, true)
+                pressMultipleKeys(bracketQueue, delay)
             end)
         end
         bracketQueue = {}
@@ -92,7 +98,7 @@ for i = 1, #str do
     end
 
     if c == "|" or c == "-" then
-        wait(humanDelay(2))
+        wait(delay * 0.2) -- Intervalle court pour espaces
         continue
     end
 
@@ -102,6 +108,6 @@ for i = 1, #str do
     end
 
     pcall(function()
-        pressKey(c, false)
+        pressKey(c, delay)
     end)
 end
