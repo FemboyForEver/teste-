@@ -9,7 +9,7 @@ local vim = game:GetService("VirtualInputManager")
 
 -- BPM constant pour "Moonlight Sonata 3e mouvement"
 local tempoChanges = {
-    {0, 168}, -- Presto agitato constant
+    {0, 300}, -- Presto agitato constant
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
