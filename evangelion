@@ -3,31 +3,31 @@ wait(1)
 shared.stop = false
 
 local str = shared.scr or "qw[er]ty"
-local FinishTime = shared.ftime or 240 -- Durée totale (4 minutes)
+local FinishTime = shared.ftime or 240 -- Durée totale (~4 minutes)
 
 local vim = game:GetService("VirtualInputManager")
 
--- Variations de BPM pour "A Cruel Angel's Thesis"
+-- Tableau des tempos pour "A Cruel Angel's Thesis"
 local tempoChanges = {
-    {0, 128},    -- Introduction
-    {15, 150},   -- Couplet 1
-    {45, 155},   -- Refrain 1
-    {75, 140},   -- Pont
-    {105, 155},  -- Refrain 2 et Climax
-    {195, 128},  -- Outro
+    {0, 78},    -- Introduction (Instrumental)
+    {15, 78},   -- Premier couplet
+    {45, 86},   -- Pré-refrain
+    {60, 90},   -- Refrain
+    {120, 78},  -- Pont musical
+    {180, 90},  -- Reprise finale
 }
 
--- Fonction pour obtenir le BPM en fonction du temps actuel
+-- Fonction pour obtenir le BPM actuel en fonction du temps
 local function getCurrentBPM(currentTime)
     for i = #tempoChanges, 1, -1 do
         if currentTime >= tempoChanges[i][1] then
             return tempoChanges[i][2]
         end
     end
-    return tempoChanges[1][2] -- Par défaut, retourne le BPM initial
+    return tempoChanges[1][2] -- Retourne le BPM initial par défaut
 end
 
--- Fonction pour calculer le délai entre chaque touche
+-- Fonction pour calculer le délai entre chaque touche en fonction du BPM
 local function calculateDelay(bpm)
     return 60 / bpm
 end
