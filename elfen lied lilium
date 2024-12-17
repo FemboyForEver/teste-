@@ -3,28 +3,29 @@ wait(1)
 shared.stop = false
 
 local str = shared.scr or "qw[er]ty"
-local FinishTime = shared.ftime or 120 -- Durée totale approximative (~2 minutes)
+local FinishTime = shared.ftime or 210 -- Durée totale (~3 minutes 30 secondes)
 
 local vim = game:GetService("VirtualInputManager")
 
--- BPM ajustés pour "Lilium" (Elfen Lied Opening)
+-- Tableau des tempos pour "Lilium"
 local tempoChanges = {
-    {0, 72},    -- Introduction douce
-    {25, 80},   -- Climax vocal
-    {60, 72},   -- Transition émotionnelle et fin
+    {0, 70},   -- Introduction
+    {40, 80},  -- Développement (Chœur principal)
+    {90, 85},  -- Climax
+    {160, 70}, -- Outro
 }
 
--- Fonction pour obtenir le BPM en fonction du temps actuel
+-- Fonction pour obtenir le BPM actuel en fonction du temps
 local function getCurrentBPM(currentTime)
     for i = #tempoChanges, 1, -1 do
         if currentTime >= tempoChanges[i][1] then
             return tempoChanges[i][2]
         end
     end
-    return tempoChanges[1][2] -- Par défaut, retourne le BPM initial
+    return tempoChanges[1][2] -- Retourne le BPM initial par défaut
 end
 
--- Fonction pour calculer le délai entre chaque touche
+-- Fonction pour calculer le délai entre chaque touche en fonction du BPM
 local function calculateDelay(bpm)
     return 60 / bpm
 end
@@ -98,3 +99,18 @@ for i = 1, #str do
     elseif c == " " or string.byte(c) == 10 then
         c = "|"
     end
+
+    if c == "|" or c == "-" then
+        wait(delay * 0.2) -- Intervalle court pour espaces
+        continue
+    end
+
+    if not rem then
+        table.insert(bracketQueue, c)
+        continue
+    end
+
+    pcall(function()
+        pressKey(c, delay)
+    end)
+end
