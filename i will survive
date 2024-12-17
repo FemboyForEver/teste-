@@ -7,9 +7,13 @@ local FinishTime = shared.ftime or 240 -- Durée totale (~4 minutes)
 
 local vim = game:GetService("VirtualInputManager")
 
--- Tempo constant pour "I Will Survive" (117 BPM)
+-- Tableau des tempos pour "I Will Survive"
 local tempoChanges = {
-    {0, 117},     -- Tempo constant de 117 BPM pour toute la chanson
+    {0, 87},    -- Introduction (Piano solo)
+    {15, 116},  -- Couplet principal
+    {60, 118},  -- Refrain
+    {120, 116}, -- Pont musical
+    {180, 118}, -- Reprise finale
 }
 
 -- Fonction pour obtenir le BPM actuel en fonction du temps
