@@ -11,7 +11,7 @@ local vim = game:GetService("VirtualInputManager")
 local tempoChanges = {
     {0, 84},    -- Introduction
     {6, 120},   -- Développement
-    {90, 76},   -- Pont
+    {90, 90},   -- Pont
     {150, 108}, -- Climax
     {240, 84},  -- Outro
 }
