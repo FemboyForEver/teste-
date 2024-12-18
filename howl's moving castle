@@ -10,7 +10,7 @@ local vim = game:GetService("VirtualInputManager")
 -- Tableau des tempos pour "Merry-Go-Round of Life"
 local tempoChanges = {
     {0, 90},    -- Introduction
-    {4, 120},   -- Développement
+    {5, 120},   -- Développement
     {90, 140},   -- Pont
     {150, 108}, -- Climax
     {240, 84},  -- Outro
