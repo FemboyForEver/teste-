@@ -36,13 +36,13 @@ local function pressKey(key, delay, isLong)
     doshift(key)
     vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
     if isLong then
-        wait(delay * 1.5) -- Note longue : durée prolongée (1,5x du délai normal)
+        -- Note longue jouée en parallèle (attente indépendante)
+        wait(delay * 1.5) -- Durée prolongée pour une note longue
     else
-        wait(delay * 0.3) -- Note courte : durée normale (30% du délai total)
+        wait(delay * 0.3) -- Note courte : durée normale
     end
     vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     endshift()
-    wait(delay * 0.2) -- Court intervalle avant la note suivante
 end
 
 local function pressMultipleKeys(keys, delay)
@@ -55,7 +55,6 @@ local function pressMultipleKeys(keys, delay)
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
         endshift()
     end
-    wait(delay * 0.2) -- Court intervalle avant la note suivante
 end
 
 local bracketQueue = {}
@@ -97,13 +96,16 @@ for i = 1, #str do
         continue
     end
 
-    -- Si une note seule est détectée après crochets, elle est jouée longuement
+    -- Si une note seule est détectée après crochets, elle est jouée longuement en parallèle
     if singleNoteMode then
-        pcall(function()
-            pressKey(c, delay, true) -- True = Note longue
-        end)
+        coroutine.wrap(function()
+            pcall(function()
+                pressKey(c, delay, true) -- True = Note longue
+            end)
+        end)()
         singleNoteMode = false -- Réinitialisation après la note isolée
     else
+        -- Notes normales jouées immédiatement
         pcall(function()
             pressKey(c, delay, false) -- False = Note normale
         end)
