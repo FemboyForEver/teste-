@@ -35,12 +35,14 @@ end
 local function pressKey(key, delay, isLong)
     doshift(key)
     vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
+
     if isLong then
-        -- Note longue jouée en parallèle (attente indépendante)
+        -- Note longue jouée en parallèle
         wait(delay * 1.5) -- Durée prolongée pour une note longue
     else
         wait(delay * 0.3) -- Note courte : durée normale
     end
+
     vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     endshift()
 end
