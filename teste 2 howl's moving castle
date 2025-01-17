@@ -10,7 +10,7 @@ local vim = game:GetService("VirtualInputManager")
 -- Tableau des tempos pour "Merry-Go-Round of Life"
 local tempoChanges = {
     {0, 90},    -- Introduction
-    {4, 190},   -- Développement
+    {4, 120},   -- Développement
 }
 
 -- Fonction pour obtenir le BPM actuel en fonction du temps
