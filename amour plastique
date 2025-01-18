@@ -10,8 +10,9 @@ local vim = game:GetService("VirtualInputManager")
 -- Variations de BPM pour "Amour Plastique"
 local tempoChanges = {
     {0, 110},    -- Début : Tempo constant
-    {90, 112},   -- Léger crescendo dans le refrain
-    {180, 108},  -- Fin avec un retour au calme
+    {4, 150},   -- Léger crescendo dans le refrain
+    {90, 142},   -- Léger crescendo dans le refrain
+    {180, 110},  -- Fin avec un retour au calme
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
