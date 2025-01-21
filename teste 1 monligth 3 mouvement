@@ -7,10 +7,10 @@ local FinishTime = shared.ftime or 210 -- Durée totale (~3 minutes et 30 second
 
 local vim = game:GetService("VirtualInputManager")
 
--- Variations de BPM pour Moonlight Sonata 3rd Movement
+-- Variations de BPM pour Moonlight Sonata 3rd Movement (Accéléré)
 local tempoChanges = {
-    {0, 250},    -- Tempo rapide, pour la majorité du mouvement
-    {60, 350},   -- Accélération vers la fin pour les passages plus rapides
+    {0, 200},    -- Tempo rapide pour la majorité du mouvement (200 BPM)
+    {60, 220},   -- Accélération vers la fin pour les passages plus rapides (220 BPM)
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
@@ -48,10 +48,8 @@ end
 local function pressKey(key, delay)
     doshift(key)
     vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
-    wait(delay * 0.3) -- Note courte : durée réduite à 30% du délai total
     vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     endshift()
-    wait(delay * 0.2) -- Court intervalle avant la note suivante
 end
 
 local function pressMultipleKeys(keys, delay)
@@ -59,12 +57,10 @@ local function pressMultipleKeys(keys, delay)
         doshift(key)
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
     end
-    wait(delay * 0.3) -- Note courte pour plusieurs touches
     for _, key in ipairs(keys) do
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
         endshift()
     end
-    wait(delay * 0.2) -- Court intervalle avant la note suivante
 end
 
 local bracketQueue = {}
@@ -99,7 +95,6 @@ for i = 1, #str do
     end
 
     if c == "|" or c == "-" then
-        wait(delay * 0.2) -- Intervalle court pour espaces
         continue
     end
 
