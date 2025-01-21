@@ -1,0 +1,121 @@
+shared.stop = true
+wait(1)
+shared.stop = false
+
+local str = shared.scr or "qw[er]ty"
+local FinishTime = shared.ftime or 10
+
+local vim = game:GetService("VirtualInputManager")
+
+local initialBPM = 140
+local maxBPM = 300
+local minBPM = 140
+local rapidIncreaseTime = 3
+local rapidDecreaseTime = 8
+local smoothIncreaseEndTime = 60
+
+local function calculateDelay(bpm)
+    return 60 / bpm
+end
+
+local shifting = false
+
+local function doshift(key)
+    if key:upper() ~= key then return end
+    if tonumber(key) then return end
+    vim:SendKeyEvent(true, 304, false, nil)
+    shifting = true
+end
+
+local function endshift()
+    if not shifting then return end
+    vim:SendKeyEvent(false, 304, false, nil)
+    shifting = false
+end
+
+local function pressKey(key, delay, hold)
+    doshift(key)
+    vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
+    wait(delay * (hold and 0.8 or 0.3))
+    vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
+    endshift()
+    wait(delay * 0.2)
+end
+
+local function pressMultipleKeys(keys, delay, hold)
+    for _, key in ipairs(keys) do
+        doshift(key)
+        vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
+    end
+    wait(delay * (hold and 0.8 or 0.3))
+    for _, key in ipairs(keys) do
+        vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
+        endshift()
+    end
+    wait(delay * 0.2)
+end
+
+local bracketQueue = {}
+local rem = true
+local holdNote = false
+local startTime = tick()
+
+for i = 1, #str do
+    if shared.stop == true then return end
+
+    local c = str:sub(i, i)
+    local currentTime = tick() - startTime
+
+    local currentBPM
+    if currentTime < rapidIncreaseTime then
+        currentBPM = initialBPM
+    elseif currentTime >= rapidIncreaseTime and currentTime < rapidDecreaseTime then
+        currentBPM = maxBPM
+    elseif currentTime >= rapidDecreaseTime and currentTime < smoothIncreaseEndTime then
+        local progress = (currentTime - rapidDecreaseTime) / (smoothIncreaseEndTime - rapidDecreaseTime)
+        currentBPM = minBPM + (progress * (maxBPM - minBPM))
+    else
+        currentBPM = maxBPM
+    end
+
+    currentBPM = math.floor(currentBPM)
+    local delay = calculateDelay(currentBPM)
+
+    if c == "[" then
+        rem = false
+        continue
+    elseif c == "]" then
+        rem = true
+        if #bracketQueue > 0 then
+            pcall(function()
+                pressMultipleKeys(bracketQueue, delay, holdNote)
+            end)
+        end
+        bracketQueue = {}
+        holdNote = false
+        continue
+    elseif c == "-" then
+        holdNote = true
+        continue
+    elseif c == "_" then
+        wait(delay * 0.8)
+        continue
+    elseif c == " " or string.byte(c) == 10 then
+        c = "|"
+    end
+
+    if c == "|" then
+        wait(delay * 0.2)
+        continue
+    end
+
+    if not rem then
+        table.insert(bracketQueue, c)
+        continue
+    end
+
+    pcall(function()
+        pressKey(c, delay, holdNote)
+        holdNote = false
+    end)
+end
