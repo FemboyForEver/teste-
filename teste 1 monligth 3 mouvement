@@ -51,7 +51,7 @@ local function pressKey(key, delay)
     wait(delay * 0.05) -- Pause réduite de 5% du délai normal pour éviter le plantage
     vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     endshift()
-    wait(delay * 0.05) -- Pause minimale avant la note suivante
+    wait(delay * 0.10) -- Pause minimale avant la note suivante
 end
 
 local function pressMultipleKeys(keys, delay)
@@ -64,7 +64,7 @@ local function pressMultipleKeys(keys, delay)
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
         endshift()
     end
-    wait(delay * 0.05) -- Pause minimale avant la note suivante
+    wait(delay * 0.15) -- Pause minimale avant la note suivante
 end
 
 local bracketQueue = {}
