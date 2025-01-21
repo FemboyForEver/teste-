@@ -9,8 +9,8 @@ local vim = game:GetService("VirtualInputManager")
 
 -- Variations de BPM pour Moonlight Sonata 3rd Movement (Accéléré)
 local tempoChanges = {
-    {0, 200},    -- Tempo rapide pour la majorité du mouvement (200 BPM)
-    {60, 220},   -- Accélération vers la fin pour les passages plus rapides (220 BPM)
+    {0, 180},    -- Tempo rapide pour la majorité du mouvement (200 BPM)
+    {60, 200},   -- Accélération vers la fin pour les passages plus rapides (220 BPM)
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
