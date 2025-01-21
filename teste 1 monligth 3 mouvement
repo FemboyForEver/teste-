@@ -48,7 +48,7 @@ end
 local function pressKey(key, delay)
     doshift(key)
     vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
-    wait(delay * 0.05) -- Pause réduite de 5% du délai normal pour éviter le plantage
+    wait(delay * 0.15) -- Pause réduite de 5% du délai normal pour éviter le plantage
     vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
     endshift()
     wait(delay * 0.10) -- Pause minimale avant la note suivante
@@ -59,7 +59,7 @@ local function pressMultipleKeys(keys, delay)
         doshift(key)
         vim:SendKeyEvent(true, string.byte(key:lower()), false, nil)
     end
-    wait(delay * 0.05) -- Pause réduite pour plusieurs touches
+    wait(delay * 0.10) -- Pause réduite pour plusieurs touches
     for _, key in ipairs(keys) do
         vim:SendKeyEvent(false, string.byte(key:lower()), false, nil)
         endshift()
