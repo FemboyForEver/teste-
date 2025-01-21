@@ -3,13 +3,14 @@ wait(1)
 shared.stop = false
 
 local str = shared.scr or "qw[er]ty"
-local FinishTime = shared.ftime or 330 -- Durée totale (~5 minutes 30 secondes)
+local FinishTime = shared.ftime or 210 -- Durée totale (~3 minutes et 30 secondes)
 
 local vim = game:GetService("VirtualInputManager")
 
--- BPM constant pour "Moonlight Sonata 3e mouvement"
+-- Variations de BPM pour Moonlight Sonata 3rd Movement
 local tempoChanges = {
-    {0, 300}, -- Presto agitato constant
+    {0, 180},    -- Tempo rapide, pour la majorité du mouvement
+    {60, 200},   -- Accélération vers la fin pour les passages plus rapides
 }
 
 -- Fonction pour obtenir le BPM en fonction du temps actuel
